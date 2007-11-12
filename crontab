@@ -7,8 +7,8 @@
   0 *    *   *   *   ~/bin/csc-sync-debian debian-unofficial ftp.debian-unofficial.org debian ftp-master.debian-unofficial.org
   0 0    *   *   *   ~/bin/csc-sync-debian emdebian www.emdebian.org emdebian
   0 *    *   *   *   ~/bin/csc-sync-debian ubuntu archive.ubuntu.com ubuntu drescher.canonical.com
-  0 */12  *   *   *   ~/bin/csc-sync-standard gobuntu-releases cdimage.ubuntu.com cdimage/gobuntu/releases/
-  0 */12  *   *   *   ~/bin/csc-sync-standard ubuntu-releases releases.ubuntu.com releases
-  0 */12  *   *   *   ~/bin/csc-sync-standard xubuntu-releases cdimage.ubuntu.com cdimage/xubuntu/releases/
-  0 */12  *   *   *   ~/bin/csc-sync-standard CPAN rsync.nic.funet.fi CPAN
-  0 */12  *   *   *   ~/bin/csc-sync-standard openoffice ftp.ussg.iu.edu openoffice
+  0 */12 *   *   *   ~/bin/csc-sync-standard gobuntu-releases cdimage.ubuntu.com cdimage/gobuntu/releases/
+  0 */12 *   *   *   ~/bin/csc-sync-standard ubuntu-releases releases.ubuntu.com releases
+  0 */12 *   *   *   ~/bin/csc-sync-standard xubuntu-releases cdimage.ubuntu.com cdimage/xubuntu/releases/
+  0 */12 *   *   *   ~/bin/csc-sync-standard CPAN rsync.nic.funet.fi CPAN
+  0 */12 *   *   *   ~/bin/csc-sync-standard openoffice ftp.ussg.iu.edu openoffice
