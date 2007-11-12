@@ -11,7 +11,7 @@ TOP_DIR=/mirror
 TO=$TOP_DIR/root/$1
 RSYNC_HOST=$2
 RSYNC_DIR=$3
-LOGDIR=/home/mirror/logs/$1_$2
+LOGDIR=/var/log/mirror/$1_$2
 ADDRESS=129.97.134.71
 
 mkdir -p $LOGDIR

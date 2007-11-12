@@ -18,7 +18,7 @@ TRACE_DIR=project/trace
 if [ $# = 5 ]; then
     TRACE_DIR=$5
 fi
-LOGDIR=/home/mirror/logs/$1_$2
+LOGDIR=/var/log/mirror/$1_$2
 ADDRESS=129.97.134.71
 
 mkdir -p $LOGDIR
