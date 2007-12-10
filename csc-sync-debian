@@ -212,7 +212,6 @@ if [[ "$TRACE_HOST" != "" ]]; then
         $TO/${TRACE_DIR}/ >> $LOGFILE 2>&1
     TRACE_POST_DATE=`ls -al $TRACE_FILE`
     if [ "$TRACE_PRE_DATE" = "$TRACE_POST_DATE" ]; then
-        LANG=C date -u > "${TO}/${TRACE_DIR}/${HOSTNAME}"
         echo 'Trace file for' $RSYNC_HOST::$RSYNC_DIR \
             'unchanged, not rsyncing.' >> $LOGFILE
         exit 0
