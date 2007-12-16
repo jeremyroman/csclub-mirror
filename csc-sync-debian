@@ -1,4 +1,4 @@
-#! /bin/sh
+#! /bin/bash
 
 if [[ $# < 3 ]]; then
   echo 'Usage: sync local_dir rsync_host rsync_dir [trace_host [trace_dir]]'
