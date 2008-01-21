@@ -170,7 +170,7 @@ for ARCH in $ARCH_EXCLUDE; do
 done
 
 # Logfile
-LOGFILE=$LOGDIR/debian-mirror.log
+LOGFILE=$LOGDIR/mirror.log
 
 # Get in the right directory and set the umask to be group writable
 # 

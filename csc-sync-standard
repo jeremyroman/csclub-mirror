@@ -63,7 +63,7 @@ LOCK="${TO}/Archive-Update-in-Progress-${HOSTNAME}"
 TMP_EXCLUDE="--exclude .~tmp~/"
 
 # Logfile
-LOGFILE=$LOGDIR/debian-mirror.log
+LOGFILE=$LOGDIR/mirror.log
 
 # Get in the right directory and set the umask to be group writable
 # 
