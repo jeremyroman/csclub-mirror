@@ -204,14 +204,14 @@ set +e
 
 # check if we need to sync
 if [[ "$TRACE_HOST" != "" ]]; then
-    TRACE_FILE=$TO/${TRACE_DIR}/${TRACE_HOST}
-    TRACE_PRE_DATE=`ls -al $TRACE_FILE`
-    rsync --recursive --times --verbose \
-        --address=$ADDRESS \
-        $RSYNC_HOST::$RSYNC_DIR/${TRACE_DIR}/ \
-        $TO/${TRACE_DIR}/ >> $LOGFILE 2>&1
-    TRACE_POST_DATE=`ls -al $TRACE_FILE`
-    if [ "$TRACE_PRE_DATE" = "$TRACE_POST_DATE" ]; then
+    TRACE_OLD_TIME=`stat -c%Y $TO/$TRACE_DIR/$TRACE_HOST 2> /dev/null`
+    TRACE_NEW_FILE=/tmp/$RSYNC_HOST_$RSYNC_DIR_$RANDOM
+    rsync --times --verbose --address=$ADDRESS \
+        $RSYNC_HOST::$RSYNC_DIR/$TRACE_DIR/$TRACE_HOST \
+        $TRACE_NEW_FILE >> $LOGFILE 2>&1
+    TRACE_NEW_TIME=`stat -c%Y $TRACE_NEW_FILE`
+    rm -f $TRACE_NEW_FILE
+    if [ "$TRACE_OLD_TIME" = "$TRACE_NEW_TIME" ]; then
         echo 'Trace file for' $RSYNC_HOST::$RSYNC_DIR \
             'unchanged, not rsyncing.' >> $LOGFILE
         exit 0
