@@ -33,8 +33,10 @@ LOCK_TIMEOUT=360
 # uncomment the following lines (and edit the other file).
 
 # . ftpsync.conf
-# export RSYNC_PASSWORD
-# RSYNC_HOST=$RSYNC_USER@$RSYNC_HOST
+export RSYNC_PASSWORD
+if [[ "$RSYNC_USER" != "" ]]; then
+    RSYNC_HOST=$RSYNC_USER@$RSYNC_HOST
+fi
 
 #-----------------------------------------------------------------------------#
 
