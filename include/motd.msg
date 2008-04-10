@@ -1,7 +1,9 @@
 *
-* Welcome to the Computer Science Club Mirror
+* Welcome to the University of Waterloo Computer Science Club Mirror
 *
 * http://csclub.uwaterloo.ca/
+*
+* Hardware funded by MEF (http://www.mef.uwaterloo.ca/)
 *
 * Admin Contact: systems-committee@csclub.uwaterloo.ca
 * Hostname: mirror.csclub.uwaterloo.ca
