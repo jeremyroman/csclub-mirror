@@ -102,6 +102,10 @@ rsync --recursive --links --hard-links --times --verbose --delay-updates --delet
      --exclude "Archive-Update-in-Progress-${HOSTNAME}" \
      --address=$ADDRESS $TMP_EXCLUDE \
      $RSYNC_HOST::$RSYNC_DIR $TO >> $LOGFILE 2>&1
+if [[ "$?" != "0" ]]; then
+    echo "ERROR: Help, something weird happened" | tee -a $LOGFILE
+    echo "mirroring /pool exited with exitcode" $result | tee -a $LOGFILE
+fi
 
 savelog $LOGFILE >/dev/null
 
