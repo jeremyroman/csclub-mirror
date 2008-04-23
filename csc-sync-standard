@@ -98,7 +98,7 @@ trap "rm -f $LOCK" exit
 set +e
 
 # Now sync the remaining stuff
-rsync --recursive --links --hard-links --times --verbose --delay-updates --delete-after \
+rsync --recursive --links --hard-links --times --verbose --delete-after \
      --exclude "Archive-Update-in-Progress-${HOSTNAME}" \
      --address=$ADDRESS $TMP_EXCLUDE \
      $RSYNC_HOST::$RSYNC_DIR $TO >> $LOGFILE 2>&1
