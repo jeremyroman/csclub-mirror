@@ -5,6 +5,8 @@ if [[ $# < 3 ]]; then
   exit 1
 fi
 
+RSYNC="nice rsync"
+
 set -e
 
 TOP_DIR=/mirror
@@ -113,10 +115,8 @@ LOCK_TIMEOUT=360
 # uncomment the following lines (and edit the other file).
 
 # . ftpsync.conf
-export RSYNC_PASSWORD
-if [[ "$RSYNC_USER" != "" ]]; then
-    RSYNC_HOST=$RSYNC_USER@$RSYNC_HOST
-fi
+# export RSYNC_PASSWORD
+# RSYNC_HOST=$RSYNC_USER@$RSYNC_HOST
 
 #-----------------------------------------------------------------------------#
 
@@ -185,7 +185,7 @@ if [ -f "$LOCK" ]; then
   if [ "`find $LOCK -maxdepth 1 -amin -$LOCK_TIMEOUT`" = "" ]; then
 # Note: this requires the procps ps; for other ps', adjust as necessary
     if ps ax | grep '[r]'sync | grep -q $RSYNC_HOST; then
-      echo "stale lock found, but a rsync is still running, aiee!"
+      echo "stale lock found, but a rsync is still running, aiee!" > /dev/stderr
       exit 1
     else
       echo "stale lock found (not accessed in the last $LOCK_TIMEOUT minutes), forcing update!"
@@ -208,7 +208,7 @@ set +e
 if [[ "$TRACE_HOST" != "" ]]; then
     TRACE_OLD_TIME=`stat -c%Y $TO/$TRACE_DIR/$TRACE_HOST 2> /dev/null`
     TRACE_NEW_FILE=/tmp/$RSYNC_HOST_$RSYNC_DIR_$RANDOM
-    rsync --times --verbose --address=$ADDRESS \
+    $RSYNC -tv --address=$ADDRESS \
         $RSYNC_HOST::$RSYNC_DIR/$TRACE_DIR/$TRACE_HOST \
         $TRACE_NEW_FILE >> $LOGFILE 2>&1
     TRACE_NEW_TIME=`stat -c%Y $TRACE_NEW_FILE`
@@ -221,7 +221,7 @@ if [[ "$TRACE_HOST" != "" ]]; then
 fi
 
 # First sync /pool
-rsync --recursive --links --hard-links --times --verbose \
+$RSYNC -rlHtv \
      $TMP_EXCLUDE $EXCLUDE $SOURCE_EXCLUDE \
      --address=$ADDRESS \
      $RSYNC_HOST::$RSYNC_DIR/pool/ $TO/pool/ >> $LOGFILE 2>&1
@@ -229,7 +229,7 @@ result=$?
 
 if [ 0 = $result ]; then
 	# Now sync the remaining stuff
-	rsync --recursive --links --hard-links --times --verbose --delay-updates --delete-after \
+	$RSYNC -rlHtv --delay-updates --delete-after \
 	     --exclude "Archive-Update-in-Progress-${HOSTNAME}" \
 	     --exclude "${TRACE_DIR}/${HOSTNAME}" \
 	     --address=$ADDRESS \

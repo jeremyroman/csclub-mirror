@@ -78,7 +78,7 @@ if [ -f "$LOCK" ]; then
   if [ "`find $LOCK -maxdepth 1 -amin -$LOCK_TIMEOUT`" = "" ]; then
 # Note: this requires the procps ps; for other ps', adjust as necessary
     if ps ax | grep '[r]'sync | grep -q $RSYNC_HOST; then
-      echo "stale lock found, but a rsync is still running, aiee!"
+      echo "stale lock found, but a rsync is still running, aiee!" > /dev/stderr
       exit 1
     else
       echo "stale lock found (not accessed in the last $LOCK_TIMEOUT minutes), forcing update!"
@@ -98,7 +98,7 @@ trap "rm -f $LOCK" exit
 set +e
 
 # Now sync the remaining stuff
-rsync --recursive --links --hard-links --times --verbose --delete-after \
+rsync -rlHtv --delete-after \
      --exclude "Archive-Update-in-Progress-${HOSTNAME}" \
      --address=$ADDRESS $TMP_EXCLUDE \
      $RSYNC_HOST::$RSYNC_DIR $TO >> $LOGFILE 2>&1
