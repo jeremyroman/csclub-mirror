@@ -1,0 +1,119 @@
+#!/usr/bin/python2.5
+import sys, os, re, gzip, bz2, hashlib
+
+package_file_map = {
+    'Packages' : file,
+    'Packages.gz' : gzip.GzipFile,
+    'Packages.bz2' : bz2.BZ2File,
+    'Sources' : file,
+    'Sources.gz' : gzip.GzipFile,
+    'Sources.bz2' : bz2.BZ2File,
+}
+
+def parse_packages_file(path):
+    try:
+        open_func = package_file_map[os.path.basename(path)]
+        file = open_func(path)
+    except IOError, e:
+        print "WARNING: failed to open %s: %s" % (path, e)
+        return {}
+    cur_dict = {}
+    key, value = None, ''
+    ret_list = []
+    while True:
+        try:
+            line = file.readline()
+        except IOError, e:
+            print "WARNING: failed to read %s: %s" % (path, e)
+            print "WARNING: %s" % e
+            return {}
+
+        # check if we are done with current value
+        if (line == '' or line[0] == '\n' or line[0] != ' ') and key != None:
+            cur_dict[key] = value
+
+        if line == '' or line == '\n': # done current block
+            if cur_dict != {}:
+                ret_list.append(cur_dict)
+                cur_dict = {}
+                key = None
+            if line == '': break
+        elif line[0] == ' ': # multi-line value
+            value += '\n' + line[1:-1]
+        else:
+            if line[-1] == '\n': line = line[:-1]
+            pos = line.find(':')
+            key = line[:pos]
+            if key == '': key = None
+            value = line[pos+2:]
+    return ret_list
+
+def find_packages_files(path):
+    files = []
+    for file in os.listdir(path):
+        file_path = "%s/%s" % (path, file)
+        if os.path.islink(file_path):
+            continue
+        elif os.path.isdir(file_path):
+            files += find_packages_files(file_path)
+        elif file in package_file_map:
+            files.append(file_path)
+    return files
+
+if len(sys.argv) != 2:
+    print "Usage: debian-check-md5sum.py base-dir"
+    sys.exit(1)
+base_dir = sys.argv[1]
+
+all = {}
+files_regex = re.compile('(\S+)\s+(\S+)\s+(\S+)')
+for file in find_packages_files(base_dir):
+    file_type = os.path.basename(file).split('.')[0]
+    a = parse_packages_file(file)
+    for package in parse_packages_file(file):
+        if file_type == 'Packages':
+            if 'Filename' in package:
+                all[package['Filename']] = package
+        elif file_type == 'Sources':
+            files = package['Files'].split('\n')
+            for file in files:
+                if file == '': continue
+                match = files_regex.match(file)
+                file_path = '%s/%s' % (package['Directory'], match.group(3))
+                all[file_path] = { 'MD5sum' : match.group(1) }
+print "NOTICE:  need to check %d files" % len(all)
+
+ret_val = 0
+block_size = 65536
+for (file, package) in all.iteritems():
+    path = '%s/%s' % (base_dir, file)
+    try:
+        file = open(path, 'rb')
+    except IOError:
+        print "WARNING: missing %s" % path
+        continue
+    if 'SHA256' in package:
+        md = hashlib.sha256()
+        hash = package['SHA256']
+    elif 'SHA1' in package:
+        md = hashlib.sha1()
+        hash = package['SHA1']
+    elif 'MD5sum' in package:
+        md = hashlib.md5()
+        hash = package['MD5sum']
+    else:
+        print "WARNING: no hash found for %s" % path
+        print package
+        exit(1)
+    while True:
+        data = file.read(block_size)
+        if data == '': break
+        md.update(data)
+    hash_calc = md.hexdigest()
+    if hash == hash_calc:
+        print "NOTICE:  hash ok for %s [hash = %s]" % (path, hash)
+    else:
+        print "ERROR:   hash mismatch for %s [hash = %s, hash_calc = %s]" % \
+            (path, hash, hash_calc)
+        ret_val = 1
+exit(ret_val)
