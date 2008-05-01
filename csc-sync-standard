@@ -98,7 +98,7 @@ trap "rm -f $LOCK" exit
 set +e
 
 # Now sync the remaining stuff
-rsync -rlHtv --delete-after \
+rsync -rlHtv --delete \
      --exclude "Archive-Update-in-Progress-${HOSTNAME}" \
      --address=$ADDRESS $TMP_EXCLUDE \
      $RSYNC_HOST::$RSYNC_DIR $TO >> $LOGFILE 2>&1
