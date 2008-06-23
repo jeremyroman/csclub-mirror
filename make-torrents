@@ -1,0 +1,31 @@
+#!/usr/bin/python
+import os.path
+
+base = '/users/www/files'
+htbase = 'http://csclub.uwaterloo.ca/media/files'
+announce = 'http://bittorrent.csclub.uwaterloo.ca/announce'
+scpto = 'bittorrent.csclub:/var/lib/bnbt/torrents/'
+comment = 'Produced by the University of Waterloo Computer Science Club (http://csclub.uwaterloo.ca/)'
+minsize = 10*1024*1024 # 10 MiB
+
+btmake = '/usr/bin/btmakemetafile.bittornado'
+scp = '/usr/bin/scp'
+
+mediafiles = [ file for file in os.listdir(base) if
+    not file.endswith('.torrent') and
+    not os.path.basename(file).startswith('.') and
+    not os.path.isdir(base + '/' + file) and
+    os.path.getsize(base + '/' + file) > minsize
+]
+
+for file in mediafiles:
+    path = base + '/' + file
+    torrentpath = path + '.torrent'
+    htpath = htbase + '/' + file
+    if not os.path.exists(torrentpath):
+        print "Making torrent for %s..." % torrentpath
+        os.spawnl(os.P_WAIT, btmake, btmake, announce, path,
+                '--comment', comment, '--target', torrentpath,
+                '--httpseeds', htpath)
+        os.spawnl(os.P_WAIT, scp, scp, torrentpath, scpto)
+print "The bittorrent tracker will begin tracking new torrents within five minutes."
