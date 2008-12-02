@@ -5,10 +5,9 @@ if [[ $# < 3 ]]; then
   exit 1
 fi
 
-RSYNC="nice rsync"
-
 set -e
 
+RSYNC="rsync"
 TOP_DIR=/mirror
 TO=$TOP_DIR/root/$1
 RSYNC_HOST=$2
@@ -223,7 +222,7 @@ fi
 # First sync /pool
 $RSYNC -rlHtv \
      $TMP_EXCLUDE $EXCLUDE $SOURCE_EXCLUDE \
-     --address=$ADDRESS \
+     --timeout=3600 --address=$ADDRESS \
      $RSYNC_HOST::$RSYNC_DIR/pool/ $TO/pool/ >> $LOGFILE 2>&1
 result=$?
 
@@ -232,7 +231,7 @@ if [ 0 = $result ]; then
 	$RSYNC -rlHtv --delay-updates --delete-after \
 	     --exclude "Archive-Update-in-Progress-${HOSTNAME}" \
 	     --exclude "${TRACE_DIR}/${HOSTNAME}" \
-	     --address=$ADDRESS \
+	     --timeout=3600 --address=$ADDRESS \
 	     $TMP_EXCLUDE $EXCLUDE $SOURCE_EXCLUDE \
 	     $RSYNC_HOST::$RSYNC_DIR $TO >> $LOGFILE 2>&1
 
