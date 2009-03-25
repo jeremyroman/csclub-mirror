@@ -1,6 +1,6 @@
 #! /bin/bash
 
-if [[ $# != 3 ]]; then
+if [ $# -lt 3 ]; then
   echo 'Usage: sync local_dir rsync_host rsync_dir'
   exit 1
 fi
@@ -14,6 +14,7 @@ RSYNC_HOST=$2
 RSYNC_DIR=$3
 LOGDIR=/var/log/mirror/$1_$2
 ADDRESS=129.97.134.71
+EXTRA=$4
 
 mkdir -p $LOGDIR
 
@@ -101,7 +102,7 @@ set +e
 # Now sync the remaining stuff
 $RSYNC -rlHtv --delete \
      --exclude "Archive-Update-in-Progress-${HOSTNAME}" \
-     --timeout=3600 --address=$ADDRESS $TMP_EXCLUDE \
+     --timeout=3600 --address=$ADDRESS $TMP_EXCLUDE $EXTRA \
      $RSYNC_HOST::$RSYNC_DIR $TO >> $LOGFILE 2>&1
 if [[ "$?" != "0" ]]; then
     echo "ERROR: Help, something weird happened" | tee -a $LOGFILE
