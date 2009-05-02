@@ -2,7 +2,6 @@
 
 set -e
 
-RSYNC="rsync"
 TOP_DIR=/mirror
 TO=$TOP_DIR/root/debian-cd
 RSYNC_HOST=cdimage.debian.org
@@ -94,7 +93,7 @@ trap "rm -f $LOCK" exit
 set +e
 
 # Now sync the remaining stuff
-$RSYNC -rlHtv --delete \
+nice rsync -rlHtv --delete \
      --include='*businesscard*.iso' --include='*netinst*.iso' \
      --exclude='*.iso' --timeout=3600 --address=$ADDRESS $TMP_EXCLUDE \
      --exclude "Archive-Update-in-Progress-${HOSTNAME}" \

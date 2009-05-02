@@ -7,7 +7,6 @@ fi
 
 set -e
 
-RSYNC="rsync"
 TOP_DIR=/mirror
 TO=$TOP_DIR/root/$1
 RSYNC_HOST=$2
@@ -207,7 +206,7 @@ set +e
 if [[ "$TRACE_HOST" != "" ]]; then
     TRACE_OLD_TIME=`stat -c%Y $TO/$TRACE_DIR/$TRACE_HOST 2> /dev/null`
     TRACE_NEW_FILE=/tmp/$RSYNC_HOST_$RSYNC_DIR_$RANDOM
-    $RSYNC -tv --address=$ADDRESS \
+    nice rsync -tv --address=$ADDRESS \
         $RSYNC_HOST::$RSYNC_DIR/$TRACE_DIR/$TRACE_HOST \
         $TRACE_NEW_FILE >> $LOGFILE 2>&1
     TRACE_NEW_TIME=`stat -c%Y $TRACE_NEW_FILE`
@@ -220,7 +219,7 @@ if [[ "$TRACE_HOST" != "" ]]; then
 fi
 
 # First sync /pool
-$RSYNC -rlHtv \
+nice rsync -rlHtv \
      $TMP_EXCLUDE $EXCLUDE $SOURCE_EXCLUDE \
      --timeout=3600 --address=$ADDRESS \
      $RSYNC_HOST::$RSYNC_DIR/pool/ $TO/pool/ >> $LOGFILE 2>&1
@@ -228,7 +227,7 @@ result=$?
 
 if [ 0 = $result ]; then
 	# Now sync the remaining stuff
-	$RSYNC -rlHtv --delay-updates --delete-after \
+	nice rsync -rlHtv --delay-updates --delete-after \
 	     --exclude "Archive-Update-in-Progress-${HOSTNAME}" \
 	     --exclude "${TRACE_DIR}/${HOSTNAME}" \
 	     --timeout=3600 --address=$ADDRESS \
