@@ -8,7 +8,7 @@
 #include <netlink/route/link.h>
 #include <netlink/cache-api.h>
 #include <netlink/object.h>
-#include "mib-tc-stats.h"
+#include "mirror-nl-glue.h"
 
 static struct nl_cache *link_cache, *class_cache;
 static struct rtnl_link *eth;

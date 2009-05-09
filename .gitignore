@@ -1,2 +1,3 @@
-/mib-tc-stats
+/csc-snmp-subagent
+/mirror-stats
 *.o

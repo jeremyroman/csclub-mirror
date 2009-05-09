@@ -6,12 +6,11 @@
 #include <net-snmp/net-snmp-config.h>
 #include <net-snmp/net-snmp-includes.h>
 #include <net-snmp/agent/net-snmp-agent-includes.h>
-#include "cscMIB.h"
-#include "mib-tc-stats.h"
+#include "mirror-mib.h"
+#include "mirror-nl-glue.h"
 
-/** Initializes the cscMIB module */
 void
-init_cscMIB(void)
+init_mirror_mib(void)
 {
     static oid      cogentBytes_oid[] =
         { 1, 3, 6, 1, 4, 1, 27934, 2, 2, 1 };
@@ -20,7 +19,9 @@ init_cscMIB(void)
     static oid      campusBytes_oid[] =
         { 1, 3, 6, 1, 4, 1, 27934, 2, 2, 3 };
 
-    DEBUGMSGTL(("cscMIB", "Initializing\n"));
+    DEBUGMSGTL(("mirror_mib", "Initializing\n"));
+
+    mirror_stats_initialize();
 
     netsnmp_register_scalar(netsnmp_create_handler_registration
                             ("cogentBytes", handle_cogentBytes,
@@ -36,20 +37,25 @@ init_cscMIB(void)
                              HANDLER_CAN_RONLY));
 }
 
+void explode_counter64(uint64_t num, struct counter64 *counter) {
+    counter->low = num & 0xFFFFFFFF;
+    counter->high = (num >> 32) & 0xFFFFFFFF;
+}
+
 int
 handle_cogentBytes(netsnmp_mib_handler *handler,
                    netsnmp_handler_registration *reginfo,
                    netsnmp_agent_request_info *reqinfo,
                    netsnmp_request_info *requests)
 {
-    uint64_t bytes;
+    struct counter64 counter;
     mirror_stats_refresh();
-    bytes = get_class_byte_count(&cogent_class);
+    explode_counter64(get_class_byte_count(&cogent_class), &counter);
 
     switch (reqinfo->mode) {
         case MODE_GET:
             snmp_set_var_typed_value(requests->requestvb, ASN_COUNTER64,
-                    (u_char *)&bytes, sizeof(bytes));
+                    (u_char *)&counter, sizeof(counter));
             break;
         default:
             die("unknown mode");
@@ -64,14 +70,14 @@ handle_orionBytes(netsnmp_mib_handler *handler,
                   netsnmp_agent_request_info *reqinfo,
                   netsnmp_request_info *requests)
 {
-    uint64_t bytes;
+    struct counter64 counter;
     mirror_stats_refresh();
-    bytes = get_class_byte_count(&orion_class);
+    explode_counter64(get_class_byte_count(&orion_class), &counter);
 
     switch (reqinfo->mode) {
         case MODE_GET:
             snmp_set_var_typed_value(requests->requestvb, ASN_COUNTER64,
-                    (u_char *)&bytes, sizeof(bytes));
+                    (u_char *)&counter, sizeof(counter));
             break;
         default:
             die("unknown mode");
@@ -86,14 +92,14 @@ handle_campusBytes(netsnmp_mib_handler *handler,
                    netsnmp_agent_request_info *reqinfo,
                    netsnmp_request_info *requests)
 {
-    uint64_t bytes;
+    struct counter64 counter;
     mirror_stats_refresh();
-    bytes = get_class_byte_count(&campus_class);
+    explode_counter64(get_class_byte_count(&campus_class), &counter);
 
     switch (reqinfo->mode) {
         case MODE_GET:
             snmp_set_var_typed_value(requests->requestvb, ASN_COUNTER64,
-                    (u_char *)&bytes, sizeof(bytes));
+                    (u_char *)&counter, sizeof(counter));
             break;
         default:
             die("unknown mode");
