@@ -6,98 +6,75 @@
 #include <libgen.h>
 #include <netlink/route/class.h>
 #include <netlink/route/link.h>
+#include <netlink/cache-api.h>
+#include <netlink/object.h>
 
-static const char *mib_prefix = ".1.3.6.1.4.1.27934.2.2";
-static char *prog;
-static int found;
+static struct nl_cache *link_cache, *class_cache;
+static struct rtnl_link *eth;
+static int ifindex;
 
-static struct mib {
-    char *mib_suffix;
+struct class_info {
     char *name;
     char *id;
-} mibv[] = {
-    { "1", "default", "01:02" },
-    { "2", "orion", "01:03" },
-    { "3", "campus", "01:04" },
 };
 
-static int mibc = sizeof(mibv)/sizeof(*mibv);
-
-static int mib_match(const char *arg, const char *mib_suffix) {
-    if (strlen(arg) < strlen(mib_prefix) + 1)
-        return 0;
-    if (strncmp(arg, mib_prefix, strlen(mib_prefix)))
-        return 0;
-    return !strcmp(arg + strlen(mib_prefix) + 1, mib_suffix);
-}
-
-static int mib_find(const char *arg) {
-    int i;
-    for (i = 0; i < mibc; i++) {
-        if (mib_match(arg, mibv[i].mib_suffix))
-                return i;
-    }
-    return -1;
-}
+struct class_info cogent_class = { "cogent", "01:02", };
+struct class_info orion_class  = { "orion",  "01:03", };
+struct class_info campus_class = { "campus", "01:04", };
 
 static struct nl_handle *nl_handle;
-
-static void dump_class_stats(struct nl_object *obj, void *arg)
-{
-    struct mib *mib = arg;
-    struct rtnl_class *class = (struct rtnl_class *)obj;
-    uint32_t handle = rtnl_class_get_handle(class);
-//    uint64_t rate = rtnl_class_get_stat(class, RTNL_TC_RATE_BPS);
-    uint64_t bytes = rtnl_class_get_stat(class, RTNL_TC_BYTES);
-    char id[32];
-
-    rtnl_tc_handle2str(handle, id, sizeof(id));
-
-    if (strcmp(id, mib->id))
-        return;
-
-    fprintf(stdout, "%s.%s\ncounter\n%ld\n", mib_prefix, mib->mib_suffix, bytes);
-    found = 1;
-}
 
 void die(const char *message) {
     fprintf(stderr, "fatal: %s\n", message);
     exit(1);
 }
 
-static void usage(void) {
-    fprintf(stderr, "usage: %s [-g | -n] %s[.X]\n", prog, mib_prefix);
-    exit(2);
+static void match_obj(struct nl_object *obj, void *arg) {
+    struct nl_object *needle = *(struct nl_object **)arg;
+    struct nl_object **ret = (struct nl_object **)arg + 1;
+
+    if (!*ret && nl_object_identical(obj, needle)) {
+        nl_object_get(obj);
+        *ret = obj;
+    }
 }
 
-int main(int argc, char *argv[]) {
-    struct nl_cache *link_cache, *class_cache;
-    struct rtnl_link *eth;
-    int ifindex, mibindex;
+static struct rtnl_class *get_class_by_id(char *id, int ifindex) {
+    uint32_t handle;
+    struct rtnl_class *needle;
+    struct nl_object *magic[2];
 
-    prog = basename(argv[0]);
+    if (rtnl_tc_str2handle(id, &handle))
+        die("invalid id");
 
-    if (argc < 2)
-        usage();
+    needle = rtnl_class_alloc();
+    rtnl_class_set_ifindex(needle, ifindex);
+    rtnl_class_set_handle(needle, handle);
 
-    mibindex = mib_find(argv[2]);
+    magic[0] = (struct nl_object *)needle;
+    magic[1] = (struct nl_object *)NULL;
 
-    if (!strcmp(argv[1], "-n")) {
-        if (mibindex < 0) {
-            if (!strcmp(argv[2], mib_prefix))
-                mibindex = 0;
-        } else if (mibindex == mibc - 1) {
-            exit(0);
-        } else {
-            mibindex++;
-        }
-    } else if (strcmp(argv[1], "-g")) {
-        usage();
-    }
+    nl_cache_foreach(class_cache, match_obj, magic);
 
-    if (mibindex < 0 || mibindex >= mibc)
-        die("invalid mib");
+    rtnl_class_put(needle);
+    return (struct rtnl_class *)magic[1];
+}
 
+uint64_t get_class_byte_count(struct class_info *info) {
+    struct rtnl_class *class = get_class_by_id(info->id, ifindex);
+    uint64_t bytes;
+    if (!class)
+        die("class not found");
+    bytes = rtnl_class_get_stat(class, RTNL_TC_BYTES);
+    rtnl_class_put(class);
+    return bytes;
+}
+
+void mirror_stats_refresh(void) {
+    nl_cache_refill(nl_handle, class_cache);
+}
+
+void mirror_stats_initialize(void) {
     nl_handle = nl_handle_alloc();
     if (!nl_handle)
         die("unable to allocate handle");
@@ -108,7 +85,6 @@ int main(int argc, char *argv[]) {
     link_cache = rtnl_link_alloc_cache(nl_handle);
     if (!link_cache)
         die("unable to allocate link cache");
-//    nl_cache_mgmt_provide(link_cache);
 
     eth = rtnl_link_get_by_name(link_cache, "eth0");
     if (!eth)
@@ -118,16 +94,23 @@ int main(int argc, char *argv[]) {
     class_cache = rtnl_class_alloc_cache(nl_handle, ifindex);
     if (!class_cache)
         die("unable to allocate class cache");
+}
 
-    nl_cache_foreach(class_cache, dump_class_stats, &mibv[mibindex]);
-
-    if (!found)
-        die("class not found");
-
+void mirror_stats_cleanup(void) {
     rtnl_link_put(eth);
     nl_cache_free(class_cache);
     nl_cache_free(link_cache);
     nl_close(nl_handle);
     nl_handle_destroy(nl_handle);
-    return 0;
+}
+
+int main(int argc, char *argv[]) {
+    mirror_stats_initialize();
+    for (;;) {
+        printf("%s %"PRIu64"\n", cogent_class.id, get_class_byte_count(&cogent_class));
+        printf("%s %"PRIu64"\n", orion_class.id, get_class_byte_count(&orion_class));
+        printf("%s %"PRIu64"\n", campus_class.id, get_class_byte_count(&campus_class));
+        sleep(1);
+        mirror_stats_refresh();
+    }
 }
