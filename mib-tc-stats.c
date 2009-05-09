@@ -8,15 +8,11 @@
 #include <netlink/route/link.h>
 #include <netlink/cache-api.h>
 #include <netlink/object.h>
+#include "mib-tc-stats.h"
 
 static struct nl_cache *link_cache, *class_cache;
 static struct rtnl_link *eth;
 static int ifindex;
-
-struct class_info {
-    char *name;
-    char *id;
-};
 
 struct class_info cogent_class = { "cogent", "01:02", };
 struct class_info orion_class  = { "orion",  "01:03", };
@@ -104,13 +100,3 @@ void mirror_stats_cleanup(void) {
     nl_handle_destroy(nl_handle);
 }
 
-int main(int argc, char *argv[]) {
-    mirror_stats_initialize();
-    for (;;) {
-        printf("%s %"PRIu64"\n", cogent_class.id, get_class_byte_count(&cogent_class));
-        printf("%s %"PRIu64"\n", orion_class.id, get_class_byte_count(&orion_class));
-        printf("%s %"PRIu64"\n", campus_class.id, get_class_byte_count(&campus_class));
-        sleep(1);
-        mirror_stats_refresh();
-    }
-}

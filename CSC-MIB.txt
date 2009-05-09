@@ -23,32 +23,24 @@ cscMIB MODULE-IDENTITY
     DESCRIPTION  "Initial revision"
     ::= { csclub 2 }
 
-netsched OBJECT IDENTIFIER ::= { cscMIB 2 }
+mirror OBJECT IDENTIFIER ::= { cscMIB 2 }
 
-classTable OBJECT-TYPE
-    SYNTAX      SEQUENCE OF ClassEntry
-    MAX-ACCESS  not-accessible
-    ::= { netsched 1 }
-
-classEntry OBJECT-TYPE
-    SYNTAX      ClassEntry
-    MAX-ACCESS  not-accessible
-    INDEX       { ClassIndex }
-    ::= { classTable 1 }
-
-ClassEntry ::=
-    SEQUENCE {
-        classIndex              Integer32,
-        classOutOctets          Counter64,
-    }
-
-classIndex OBJECT-TYPE
-    SYNTAX      Integer32
-    MAX-ACCESS  read-only
-    STATUS      current
-    ::= { classEntry 1 }
-
-classOutOctets OBJECT-TYPE
+cogentBytes OBJECT-TYPE
     SYNTAX      Counter64
     MAX-ACCESS  read-only
-    ::= { classEntry 2 }
+    STATUS      current
+    ::= { mirror 1 }
+
+orionBytes OBJECT-TYPE
+    SYNTAX      Counter64
+    MAX-ACCESS  read-only
+    STATUS      current
+    ::= { mirror 2 }
+
+campusBytes OBJECT-TYPE
+    SYNTAX      Counter64
+    MAX-ACCESS  read-only
+    STATUS      current
+    ::= { mirror 3 }
+
+END
