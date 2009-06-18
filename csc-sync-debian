@@ -183,7 +183,7 @@ if [ -f "$LOCK" ]; then
   if [ "`find $LOCK -maxdepth 1 -amin -$LOCK_TIMEOUT`" = "" ]; then
 # Note: this requires the procps ps; for other ps', adjust as necessary
     if ps ax | grep '[r]'sync | grep -q $RSYNC_HOST; then
-      echo "stale lock found, but a rsync is still running, aiee!" > /dev/stderr
+      echo "stale lock found, but a rsync is still running, aiee!" >&2
       exit 1
     else
       echo "stale lock found (not accessed in the last $LOCK_TIMEOUT minutes), forcing update!"
