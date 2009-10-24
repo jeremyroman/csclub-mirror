@@ -95,7 +95,7 @@ set +e
 # Now sync the remaining stuff
 nice rsync -rlHtv --delete \
      --include='*businesscard*.iso' --include='*netinst*.iso' \
-     --exclude='*.iso' --timeout=3600 --address=$ADDRESS $TMP_EXCLUDE \
+     --exclude='*.iso' --timeout=3600 -4 --address=$ADDRESS $TMP_EXCLUDE \
      --exclude "Archive-Update-in-Progress-${HOSTNAME}" \
      $RSYNC_HOST::$RSYNC_DIR $TO >> $LOGFILE 2>&1
 if [[ "$?" != "0" ]]; then

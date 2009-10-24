@@ -206,7 +206,7 @@ set +e
 if [[ "$TRACE_HOST" != "" ]]; then
     TRACE_OLD_TIME=`stat -c%Y $TO/$TRACE_DIR/$TRACE_HOST 2> /dev/null`
     TRACE_NEW_FILE=/tmp/$RSYNC_HOST_$RSYNC_DIR_$RANDOM
-    nice rsync -tv --address=$ADDRESS \
+    nice rsync -tv -4 --address=$ADDRESS \
         $RSYNC_HOST::$RSYNC_DIR/$TRACE_DIR/$TRACE_HOST \
         $TRACE_NEW_FILE >> $LOGFILE 2>&1
     TRACE_NEW_TIME=`stat -c%Y $TRACE_NEW_FILE`
@@ -221,7 +221,7 @@ fi
 # First sync /pool
 nice rsync -rlHtv \
      $TMP_EXCLUDE $EXCLUDE $SOURCE_EXCLUDE \
-     --timeout=3600 --address=$ADDRESS \
+     --timeout=3600 -4 --address=$ADDRESS \
      $RSYNC_HOST::$RSYNC_DIR/pool/ $TO/pool/ >> $LOGFILE 2>&1
 result=$?
 
@@ -230,7 +230,7 @@ if [ 0 = $result ]; then
 	nice rsync -rlHtv --delay-updates --delete-after \
 	     --exclude "Archive-Update-in-Progress-${HOSTNAME}" \
 	     --exclude "${TRACE_DIR}/${HOSTNAME}" \
-	     --timeout=3600 --address=$ADDRESS \
+	     --timeout=3600 -4 --address=$ADDRESS \
 	     $TMP_EXCLUDE $EXCLUDE $SOURCE_EXCLUDE \
 	     $RSYNC_HOST::$RSYNC_DIR $TO >> $LOGFILE 2>&1
 

@@ -99,14 +99,15 @@ trap "rm -f $LOCK" exit
 set +e
 
 # Now sync the remaining stuff
-nice rsync -rlHtv --delete \
+nice rsync -aHv --delete \
      --exclude "Archive-Update-in-Progress-${HOSTNAME}" \
-     --timeout=3600 --address=$ADDRESS $TMP_EXCLUDE $EXTRA \
+     --timeout=3600 -4 --address=$ADDRESS $TMP_EXCLUDE $EXTRA \
      $RSYNC_HOST::$RSYNC_DIR $TO >> $LOGFILE 2>&1
 if [[ "$?" != "0" ]]; then
     echo "ERROR: Help, something weird happened" | tee -a $LOGFILE
     echo "mirroring /pool exited with exitcode" $result | tee -a $LOGFILE
 fi
+chmod ug+rwx $TO
 
 savelog $LOGFILE >/dev/null
 
