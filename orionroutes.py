@@ -3,7 +3,7 @@
 # Configuration
 ORION_TABLE =   1 # from /etc/iproute2/rt_tables
 ORION_REALMS =  1 # from /etc/iproute2/rt_realms
-ORION_VIAS =    [ "66.97.23.33", "129.97.1.46" ]
+ORION_VIAS =    [ "66.97.23.33", "66.97.28.65", "129.97.1.46" ]
 ORION_GW =      "129.97.134.1"
 ORION_SRC =     "129.97.134.42"
 ORION_IFACE =   "eth0"
