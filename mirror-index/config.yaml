@@ -1,0 +1,172 @@
+docroot: /mirror/root
+duflags: --human-readable --max-depth=1
+output: /mirror/root/index.html
+
+directories:
+  apache:
+    site: apache.org
+    url: http://www.apache.org/
+
+  archlinux:
+    site: archlinux.org
+    url: http://www.archlinux.org/
+
+  blastwave:
+    site: blastwave.org
+    url: http://www.blastwave.org/
+
+  centos:
+    site: centos.org
+    url: http://www.centos.org/
+
+  CPAN:
+    site: cpan.org
+    url: http://www.cpan.org/
+
+  CRAN:
+    site: r-project.org
+    url: http://cran.r-project.org/
+
+  csclub:
+    site: csclub.uwaterloo.ca
+    url: http://csclub.uwaterloo.ca/media/
+
+  CTAN:
+    site: ctan.org
+    url: http://www.ctan.org/
+
+  cygwin:
+    site: cygwin.com
+    url: http://www.cygwin.com/
+
+  damnsmalllinux:
+    site: damnsmalllinux.org
+    url: http://www.damnsmalllinux.org/
+
+  debian:
+    site: debian.org
+    url: http://www.debian.org/
+
+  debian-backports:
+    site: backports.org
+    url: http://www.backports.org/
+
+  debian-cd:
+    site: debian.org
+    url: http://www.debian.org/CD/
+
+  debian-multimedia:
+    site: debian-multimedia.org
+    url: http://www.debian-multimedia.org/
+
+  debian-ports:
+    site: debian-ports.org
+    url: http://www.debian-ports.org/
+
+  debian-security:
+    site: debian.org
+    url: http://www.debian.org/security/
+
+  debian-unofficial:
+    site: debian-maintainers.org
+    url: http://unofficial.debian-maintainers.org/
+
+  debian-volatile:
+    site: debian.org
+    url: http://www.debian.org/volatile/
+
+  eclipse:
+    site: eclipse.org
+    url: http://www.eclipse.org/
+
+  emdebian:
+    site: emdebian.org
+    url: http://www.emdebian.org/
+
+  FreeBSD:
+    site: freebsd.org
+    url: http://www.freebsd.org/
+
+  gentoo-distfiles:
+    site: gentoo.org
+    url: http://www.gentoo.org/
+
+  gentoo-portage:
+    site: gentoo.org
+    url: http://www.gentoo.org/
+
+  gnome:
+    site: gnome.org
+    url: http://www.gnome.org/
+
+  gnu:
+    site: gnu.org
+    url: http://www.gnu.org/
+
+  kde:
+    site: kde.org
+    url: http://www.kde.org/
+
+  kernel.org:
+    site: kernel.org
+    url: http://www.kernel.org/
+
+  linuxmint:
+    site: linuxmint.com
+    url: http://www.linuxmint.com/
+
+  linuxmint-packages:
+    site: linuxmint.com
+    url: http://www.linuxmint.com/
+
+  mozdev:
+    site: mozdev.org
+    url: http://www.mozdev.org/
+
+  mozilla.org:
+    site: mozilla.org
+    url: http://www.mozilla.org/
+
+  mysql:
+    site: mysql.com
+    url: http://www.mysql.com/
+
+  nongnu:
+    site: nongnu.org
+    url: http://savannah.nongnu.org/
+
+  openoffice:
+    site: openoffice.org
+    url: http://www.openoffice.org/
+
+  opensuse:
+    site: opensuse.org
+    url: http://www.opensuse.org/
+
+  slackware:
+    site: slackware.com
+    url: http://www.slackware.com/
+
+  ubuntu:
+    site: ubuntu.com
+    url: http://www.ubuntu.com/
+
+  ubuntu-ports:
+    site: ports.ubuntu.com
+    url: http://ports.ubuntu.com/ubuntu-ports/
+
+  ubuntu-ports-releases:
+    site: ports.ubuntu.com
+    url: http://cdimage.ubuntu.com/ports/releases/
+
+  ubuntu-releases:
+    site: releases.ubuntu.com
+    url: http://releases.ubuntu.com/
+
+  x.org:
+    site: x.org
+    url: http://www.x.org/
+
+  xubuntu-releases:
+    site: xubuntu.org
+    url: http://www.xubuntu.org/
