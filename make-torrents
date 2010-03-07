@@ -1,7 +1,7 @@
 #!/usr/bin/python
 import os.path
 
-base = '/users/www/files'
+base = '/mirror/root/csclub'
 htbase = 'http://csclub.uwaterloo.ca/media/files'
 announce = 'http://bittorrent.csclub.uwaterloo.ca/announce'
 scpto = 'bittorrent.csclub:/var/lib/bnbt/torrents/'

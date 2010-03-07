@@ -27,7 +27,7 @@ session = /var/lib/rtorrent/session
 
 # Watch a directory for new torrents, and stop those that have been
 # deleted.
-schedule = watch_www_directory,1,5,load_start=/www/files/*.torrent
+schedule = watch_www_directory,1,5,load_start=/mirror/root/csclub/*.torrent
 schedule = untied_directory,5,5,remove_untied=
 
 # Close torrents when diskspace is low.
