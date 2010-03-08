@@ -1,0 +1,6 @@
+#!/bin/bash
+
+# This file updates the orion routing table.
+# Put it at /usr/local/sbin/update-orion-routes.
+
+wget --quiet -O - http://noc.uwaterloo.ca/~ns-owner/ext-routes.txt | /usr/local/sbin/orionroutes.py

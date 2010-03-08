@@ -1,0 +1,32 @@
+# This file describes the network interfaces available on your system
+# and how to activate them. For more information, see interfaces(5).
+
+# The loopback network interface
+auto lo
+iface lo inet loopback
+
+# The routes added here will not be visible to the 'route' command; you
+# should use 'ip route show table foo' instead.
+
+auto eth0
+iface eth0 inet static
+	address 129.97.134.42
+	netmask 255.255.255.0
+	gateway 129.97.134.1
+	up   ip rule add from all lookup campus prio 1
+	down ip rule del from all lookup campus prio 1
+	up   ip rule add from all lookup orion prio 2
+	down ip rule del from all lookup orion prio 2
+	up   ip route add 129.97.0.0/16  via 129.97.134.1 dev eth0 table campus realm campus
+	down ip route del 129.97.0.0/16  via 129.97.134.1 dev eth0 table campus realm campus
+	up   ip route add 10.0.0.0/8     via 129.97.134.1 dev eth0 table campus realm campus
+	down ip route del 10.0.0.0/8     via 129.97.134.1 dev eth0 table campus realm campus
+	up   ip route add 172.16.0.0/20  via 129.97.134.1 dev eth0 table campus realm campus
+	down ip route del 172.16.0.0/20  via 129.97.134.1 dev eth0 table campus realm campus
+	up   ip route add 192.168.0.0/16 via 129.97.134.1 dev eth0 table campus realm campus
+	down ip route del 192.168.0.0/16 via 129.97.134.1 dev eth0 table campus realm campus
+
+auto eth0:mirror
+iface eth0:mirror inet static
+	address 129.97.134.71
+	netmask 255.255.255.0
