@@ -1,9 +1,14 @@
-# m  h     dom mon dow command
+# /etc/cron.d/csc-mirror: mirror cron jobs
+
+# m h dom mon dow user	command
+
+# update orion routes
+30 5 * * * root /usr/local/sbin/update-orion-routes
 
 # make torrents
-  */10 *  *   *   *     /home/mirror/bin/make-torrents > /dev/null 2> /dev/null
+*/10 * * * * mirror /home/mirror/bin/make-torrents > /dev/null 2> /dev/null
 
-# These rsync cron jobs are now run by a small script a2brenna wrote
+# The rsync cron jobs are now run by a small script a2brenna wrote
 # that works a bit more intelligently than cron. For one thing, it
 # won't kick off a sync when one's already running. Please see
 # ~mirror/merlin.
@@ -14,4 +19,4 @@
 # archive or some such thing
 #
 # Documented here: http://wiki.csclub.uwaterloo.ca/Mirror#Index
-40  5  */14  *  *    cd /home/mirror/mirror-index && /home/mirror/mirror-index/make-index.py
+40 5 */14 * * mirror cd /home/mirror/mirror-index && /home/mirror/mirror-index/make-index.py
