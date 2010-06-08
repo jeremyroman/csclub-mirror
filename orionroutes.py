@@ -10,7 +10,7 @@ ORION_IFACE =   "eth0"
 
 # Don't touch anything beyond here
 
-import sys, re, iplib, SubnetTree
+import sys, iplib, SubnetTree
 from ctypes import *
 
 NETLINK_ROUTE =         0
@@ -82,28 +82,20 @@ except Exception,e:
 def nl_die(func):
     die("%s: %s" % (func, nl_geterror()))
 
-cidr_re = re.compile("(B{0,1})\\s+([0-9.]+)/{0,1}(\\d*)(.*)")
-via_re = re.compile(".*?via ([0-9.]+)")
-
 ips = [[] for i in range(33)]
-last_bits = 0
-count = 0
-for line in sys.stdin.readlines():
-    cidr = cidr_re.match(line)
-    if cidr == None:
-        continue
-    cidr = cidr.groups()
-    if cidr[2] != '':
-        last_bits = cidr[2]
-    if cidr[0] != 'B':
-        continue
-    via = via_re.match(cidr[3])
-    if via == None or via.group(1) not in ORION_VIAS:
-        continue
-    ips[int(last_bits)].append(int(iplib.IPv4Address(cidr[1])))
-    count = count + 1
+for line in sys.stdin:
+    try:
+        ip, mask, via, _, _, _, _, _, _, _ = line.strip().split(',')
+    except ValueError:
+        die("Malformed line: %s" % line.strip())
 
-if count < 10: # we should never have less than 10 routes
+    if via not in ORION_VIAS:
+        continue
+    bits = int(iplib.IPv4NetMask(mask).get_bits())
+    ips[bits].append(int(iplib.IPv4Address(ip)))
+
+count = sum([len(ip_list) for ip_list in ips])
+if count < 10:
     die("Not enough routes (got %d)" % count)
 
 cidrs = []
