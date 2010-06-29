@@ -1,3 +1,6 @@
+# this file goes at /etc/csc/mibs/CSC-MIB.txt
+# and make sure to copy snmp.conf
+
 CSC-MIB DEFINITIONS ::= BEGIN
 
 IMPORTS
