@@ -1,0 +1,43 @@
+img {
+ border: none;
+}
+html {
+ margin:0.5ex;
+ font-family: sans-serif;
+ font-size: 110%;
+}
+p {
+ margin: 1ex 0;
+}
+table {
+ border-collapse: collapse;
+ text-align: left;
+ width: 100%;
+}
+td {
+ border-top: 1px solid #aaa;
+}
+th, td {
+ padding: .4ex 2em .4ex 0;
+}
+h1 {
+ font-size: 110%;
+}
+#logo {
+ width: 100%;
+ text-align: center;
+ margin-bottom:1em;
+}
+#footer {
+ margin: 2em auto 0 auto;
+ width: 75%;
+ font-size: 70%;
+ text-align: center;
+}
+body {
+ max-width: 40em;
+ margin-top:0;
+ padding-top:0;
+}
+
+tr :last-child { text-align: right; }

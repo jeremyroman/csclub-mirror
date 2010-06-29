@@ -1,5 +1,8 @@
 #!/usr/bin/python
 
+# This file updates the orion routing table.
+# Put it at /usr/local/sbin/orionroutes.py
+
 # Configuration
 ORION_TABLE =   1 # from /etc/iproute2/rt_tables
 ORION_REALMS =  1 # from /etc/iproute2/rt_realms

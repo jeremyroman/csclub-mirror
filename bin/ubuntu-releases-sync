@@ -1,0 +1,3 @@
+#!/bin/sh
+# This file is used for ubuntu push mirroring. Do not remove it!
+exec ~/bin/csc-sync-standard ubuntu-releases rsync.releases.ubuntu.com releases

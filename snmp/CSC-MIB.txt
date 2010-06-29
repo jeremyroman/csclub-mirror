@@ -1,0 +1,46 @@
+CSC-MIB DEFINITIONS ::= BEGIN
+
+IMPORTS
+    MODULE-IDENTITY, OBJECT-TYPE, Counter32, Gauge32, Counter64,
+    Integer32, TimeTicks, mib-2, enterprises,
+    NOTIFICATION-TYPE                        FROM SNMPv2-SMI
+    TEXTUAL-CONVENTION, DisplayString,
+    PhysAddress, TruthValue, RowStatus,
+    TimeStamp, AutonomousType, TestAndIncr   FROM SNMPv2-TC
+    MODULE-COMPLIANCE, OBJECT-GROUP,
+    NOTIFICATION-GROUP                       FROM SNMPv2-CONF
+    snmpTraps                                FROM SNMPv2-MIB
+    IANAifType                               FROM IANAifType-MIB;
+
+csclub OBJECT IDENTIFIER ::= { enterprises 27934 }
+
+cscMIB MODULE-IDENTITY
+    LAST-UPDATED "200905080000Z"
+    ORGANIZATION "University of Waterloo Computer Science Club"
+    CONTACT-INFO "systems-committee@csclub.uwaterloo.ca"
+    DESCRIPTION  "Computer Science Club Local MIBs"
+    REVISION     "200905080000Z"
+    DESCRIPTION  "Initial revision"
+    ::= { csclub 2 }
+
+mirror OBJECT IDENTIFIER ::= { cscMIB 2 }
+
+cogentBytes OBJECT-TYPE
+    SYNTAX      Counter64
+    MAX-ACCESS  read-only
+    STATUS      current
+    ::= { mirror 1 }
+
+orionBytes OBJECT-TYPE
+    SYNTAX      Counter64
+    MAX-ACCESS  read-only
+    STATUS      current
+    ::= { mirror 2 }
+
+campusBytes OBJECT-TYPE
+    SYNTAX      Counter64
+    MAX-ACCESS  read-only
+    STATUS      current
+    ::= { mirror 3 }
+
+END

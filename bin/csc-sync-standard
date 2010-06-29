@@ -1,0 +1,21 @@
+#!/bin/bash -e
+
+if [ $# -lt 3 ]; then
+  echo 'Usage: sync local_dir rsync_host rsync_dir'
+  exit 1
+fi
+
+umask 002
+
+TO=/mirror/root/$1
+RSYNC_HOST=$2
+RSYNC_DIR=$3
+if test -n "$RSYNC_USER"; then
+  RSYNC_HOST=$RSYNC_USER@$RSYNC_HOST
+fi
+
+exec nice rsync -aH --no-owner --no-group --delete \
+     --timeout=3600 -4 --address=129.97.134.71 \
+     --exclude .~tmp~/ \
+     --quiet --stats --log-file=/home/mirror/merlin/logs/transfer.log \
+     $RSYNC_HOST::$RSYNC_DIR $TO

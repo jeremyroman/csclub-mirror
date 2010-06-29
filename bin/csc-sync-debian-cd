@@ -1,19 +1,13 @@
 #! /bin/bash
 
-if [ $# -lt 3 ]; then
-  echo 'Usage: sync local_dir rsync_host rsync_dir'
-  exit 1
-fi
-
 set -e
 
 TOP_DIR=/mirror
-TO=$TOP_DIR/root/$1
-RSYNC_HOST=$2
-RSYNC_DIR=$3
-LOGDIR=/var/log/mirror/$1_$2
+TO=$TOP_DIR/root/debian-cd
+RSYNC_HOST=cdimage.debian.org
+RSYNC_DIR=debian-cd
+LOGDIR=/var/log/mirror/debian-cd_cdimage.debian.org
 ADDRESS=129.97.134.71
-EXTRA=$4
 
 mkdir -p $LOGDIR
 
@@ -99,15 +93,19 @@ trap "rm -f $LOCK" exit
 set +e
 
 # Now sync the remaining stuff
-nice rsync -aHv --delete \
+nice rsync -rlHtv --delete \
+     --include='*-businesscard.iso' \
+     --include='*-netinst.iso' \
+     --include='*-CD-1.iso' \
+     --include='*-amd64-DVD-1.iso' \
+     --include='*-i386-DVD-1.iso' \
+     --exclude='*.iso' --timeout=3600 -4 --address=$ADDRESS $TMP_EXCLUDE \
      --exclude "Archive-Update-in-Progress-${HOSTNAME}" \
-     --timeout=3600 -4 --address=$ADDRESS $TMP_EXCLUDE $EXTRA \
      $RSYNC_HOST::$RSYNC_DIR $TO >> $LOGFILE 2>&1
 if [[ "$?" != "0" ]]; then
     echo "ERROR: Help, something weird happened" | tee -a $LOGFILE
     echo "mirroring /pool exited with exitcode" $result | tee -a $LOGFILE
 fi
-chmod ug+rwx $TO
 
 savelog $LOGFILE >/dev/null
 
