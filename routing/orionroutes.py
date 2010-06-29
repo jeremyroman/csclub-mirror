@@ -89,7 +89,7 @@ ips = [[] for i in range(33)]
 for line in sys.stdin:
     try:
         ip, mask, via = line.strip().split(',')[0:3]
-    except ValueError:
+    except KeyError, ValueError:
         die("Malformed line: %s" % line.strip())
 
     if via not in ORION_VIAS:
