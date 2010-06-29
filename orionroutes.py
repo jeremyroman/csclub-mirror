@@ -85,7 +85,7 @@ def nl_die(func):
 ips = [[] for i in range(33)]
 for line in sys.stdin:
     try:
-        ip, mask, via, _, _, _, _, _, _, _ = line.strip().split(',')
+        ip, mask, via = line.strip().split(',')[0:3]
     except ValueError:
         die("Malformed line: %s" % line.strip())
 
