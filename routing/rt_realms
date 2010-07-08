@@ -1,0 +1,11 @@
+# This file lives at /etc/iproute2/rt_realms
+
+#
+# reserved values
+#
+0	cosmos
+#
+# local
+#
+1	orion
+2	campus
